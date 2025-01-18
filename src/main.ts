@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,16 @@ async function bootstrap() {
       inheritAppConfig: true,
     },
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Flight Scrapper Sample App')
+    .setDescription('Sample App for Flight Scrapper')
+    .setVersion('1.0')
+    .addTag('flight')
+    .build();
+
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   app.useGlobalPipes(
     new ValidationPipe({

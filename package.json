@@ -27,6 +27,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^11.0.1",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^11.0.2",
     "@types/lodash": "^4.17.14",
     "axios": "^1.7.9",
     "class-transformer": "^0.5.1",
