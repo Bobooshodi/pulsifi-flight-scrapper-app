@@ -10,7 +10,7 @@ import { HttpModule } from '@nestjs/axios';
       {
         name: 'AIRPORT_MICROSERVICE',
         transport: Transport.TCP,
-        options: { port: 3001 },
+        options: { host: 'app', port: 3001 },
       },
     ]),
     HttpModule,

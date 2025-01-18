@@ -9,6 +9,7 @@ async function bootstrap() {
   const airportMicroService = app.connectMicroservice({
     transport: Transport.TCP,
     options: {
+      host: 'app',
       port: 3001,
       inheritAppConfig: true,
     },
