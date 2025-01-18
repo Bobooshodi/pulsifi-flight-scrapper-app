@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { firstValueFrom, catchError } from 'rxjs';
 import { sortBy } from 'lodash';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class FlightService {
@@ -18,7 +19,7 @@ export class FlightService {
     private readonly httpService: HttpService,
   ) {}
 
-  getAPIRoute(type: FLIGHT_TYPES): string {
+  private makeAPIRoute(type: FLIGHT_TYPES): string {
     let route = '';
 
     switch (type) {
@@ -42,6 +43,19 @@ export class FlightService {
     return `https://${this.configService.get('RAPID_API_HOST')}/flights/${route}`;
   }
 
+  private isEligibleForDiscount(searchDetails: SearchFlightDto) {
+    const { startDate, endDate } = searchDetails;
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+
+    return end.diff(start, 'days') >= 10;
+  }
+
+  private applyDiscount(price: number, discountPercentage: number) {
+    const discount = (price * discountPercentage) / 100;
+    return price - discount;
+  }
+
   async getAirports(): Promise<any> {
     try {
       return this.airportClient.send('findAllAirport', {});
@@ -56,10 +70,11 @@ export class FlightService {
     query: SearchFlightDto,
   ): Promise<Flight[]> {
     try {
+      const applyDiscount = this.isEligibleForDiscount(query);
       const queryString = SearchFlightDto.mapToQuery(query);
       const response = await firstValueFrom(
         this.httpService
-          .get(`${this.getAPIRoute(type)}?${queryString}`, {
+          .get(`${this.makeAPIRoute(type)}?${queryString}`, {
             headers: {
               'X-RapidAPI-Key': this.configService.get('RAPID_API_KEY'),
               'X-RapidAPI-Host': this.configService.get('RAPID_API_HOST'),
@@ -72,8 +87,19 @@ export class FlightService {
             }),
           ),
       );
-      const flights = response.data.data?.itineraries;
-      return sortBy(flights, (flight) => flight.price.raw);
+      let flights = response.data.data?.itineraries;
+      flights = sortBy(flights, (flight) => flight.price.raw);
+
+      return flights.map((flight) => {
+        if (applyDiscount) {
+          flight.price.discountedPrice = this.applyDiscount(
+            flight.price.raw,
+            10,
+          );
+        }
+
+        return flight;
+      });
     } catch (error) {
       console.error(error);
       return [];
