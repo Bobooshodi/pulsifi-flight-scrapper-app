@@ -15,6 +15,7 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Flight Scrapper Sample App')
     .setDescription('Sample App for Flight Scrapper')
     .setVersion('1.0')

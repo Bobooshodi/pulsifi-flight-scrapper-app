@@ -8,11 +8,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FlightService } from './flight.service';
-import { FLIGHT_TYPES } from './constants/flightTypes';
+import { FLIGHT_TYPES } from '../constants/flightTypes';
 import { SearchFlightDto } from './dto/search-flight.dto';
 import { Airport } from 'src/airport/entities/airport.entity';
-import { ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBearerAuth, ApiParam, ApiQuery, ApiSecurity } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('flight')
 export class FlightController {
   constructor(private readonly flightService: FlightService) {}

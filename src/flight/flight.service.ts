@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SearchFlightDto } from './dto/search-flight.dto';
 import { Flight } from './entities/flight.entity';
-import { FLIGHT_TYPES } from './constants/flightTypes';
+import { FLIGHT_TYPES } from '../constants/flightTypes';
 import { ClientProxy } from '@nestjs/microservices';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
