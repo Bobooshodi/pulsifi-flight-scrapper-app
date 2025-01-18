@@ -16,7 +16,7 @@ export class AirportService {
   path = 'flights/airports';
   baseUrl = this.configService.get('RAPID_API_HOST');
 
-  async findAll(): Promise<any> {
+  async findAll(): Promise<Airport[]> {
     try {
       const response = await firstValueFrom(
         this.httpService
@@ -33,7 +33,8 @@ export class AirportService {
             }),
           ),
       );
-      return response.data;
+      const airports = response.data.data?.filter((airport) => !!airport.skyId);
+      return Airport.transformMany(airports);
     } catch (error) {
       console.error(error);
       return [];
@@ -61,7 +62,7 @@ export class AirportService {
       return response.data;
     } catch (error) {
       console.error(error);
-      return [];
+      return undefined;
     }
   }
 }

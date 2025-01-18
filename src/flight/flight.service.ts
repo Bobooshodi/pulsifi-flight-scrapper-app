@@ -7,6 +7,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { firstValueFrom, catchError } from 'rxjs';
+import { sortBy } from 'lodash';
 
 @Injectable()
 export class FlightService {
@@ -53,7 +54,7 @@ export class FlightService {
   async searchFlights(
     type: FLIGHT_TYPES,
     query: SearchFlightDto,
-  ): Promise<Flight> {
+  ): Promise<Flight[]> {
     try {
       const queryString = SearchFlightDto.mapToQuery(query);
       const response = await firstValueFrom(
@@ -71,7 +72,8 @@ export class FlightService {
             }),
           ),
       );
-      return response.data;
+      const flights = response.data.data?.itineraries;
+      return sortBy(flights, (flight) => flight.price.raw);
     } catch (error) {
       console.error(error);
       return [];
