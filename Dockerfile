@@ -7,4 +7,4 @@ COPY package.json package.json
 RUN yarn && yarn cache clean --force
 COPY . .
 
-CMD ["yarn", "start:dev"]
+CMD ["yarn", "start:prod"]
