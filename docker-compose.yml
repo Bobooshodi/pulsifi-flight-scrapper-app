@@ -1,21 +1,14 @@
 version: '2'
 
 services:
-
   app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    env_file: .env  
-    volumes:
-      - .:/usr/src/app
-      - node_modules:/home/node/app/node_modules
+    env_file: .env
 
 networks:
   default:
     driver: bridge
-
-volumes:
-  node_modules:
